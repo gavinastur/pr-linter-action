@@ -4,7 +4,6 @@ on:
   pull_request:
   push:
     branches:
-      - master
       - main
 
 jobs:
@@ -17,12 +16,12 @@ jobs:
   dist-run:
     if: ${{ github.event_name != 'push' }}
     needs: [test,dist-check]
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: ./
   success:
     needs: [test,dist-check]
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     steps:
       - run: echo "Workflow successful"

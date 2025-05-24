@@ -5,7 +5,7 @@ on:
 
 jobs:
   dist-check:
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

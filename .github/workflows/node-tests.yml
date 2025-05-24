@@ -177,7 +177,7 @@ jobs:
   lint:
     name: Lint
     if: ${{ inputs.eslint-enable }}
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     outputs:
       short-sha: ${{ env.GITHUB_SHA_SHORT }}
       ref-slug: ${{ env.GITHUB_REF_SLUG_URL }}
@@ -246,7 +246,7 @@ jobs:
   prettier:
     name: Prettier
     if: ${{ inputs.prettier-enable }}
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
@@ -282,7 +282,7 @@ jobs:
   # <----------------------- TESTS ----------------------->
   tests:
     name: Tests
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     if: ${{ inputs.test-enable }}
     steps:
       - name: Checkout Source
@@ -343,7 +343,7 @@ jobs:
   tsc:
     name: TSC
     if: ${{ inputs.tsc-enable }}
-    runs-on: ubuntu-latest-arm64-2-cores
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
