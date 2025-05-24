@@ -55,11 +55,6 @@ on:
         type: string
         description: "Choose the level of eslint to use (error, warning, info)"
         default: "error"
-      eslint-fail-on-error:
-        required: false
-        type: boolean
-        description:
-          "(DEPRECATED: use fail-level instead) To not fail the job on eslint errors set to false"
       eslint-fail-level:
         required: false
         type: string
@@ -129,8 +124,7 @@ on:
       tsc-reporter:
         required: false
         type: string
-        description:
-          "Choose the reporter to use for tsc (github-pr-review, github-pr-check, github-check)"
+        description: "Choose the reporter to use for tsc (github-pr-review, github-pr-check, github-check)"
         default: "github-check"
       tsc-level:
         required: false
@@ -145,26 +139,22 @@ on:
       # <--------------- ARTIFACT NAMING ------------->
       artifact-prefix:
         type: string
-        description:
-          "A prefix to apply to the name of the artifacts to upload (useful for matrix builds)"
+        description: "A prefix to apply to the name of the artifacts to upload (useful for matrix builds)"
         required: false
       # <--------------- GIT SETTINGS ------------->
       fetch-depth:
         required: false
         type: number
-        description:
-          "Number of commits to fetch. 0 indicates all history for all branches and tags."
+        description: "Number of commits to fetch. 0 indicates all history for all branches and tags."
         default: 1
     secrets:
       # <-------------- BUILD CREDENTIALS ---------------->
       auth-token:
         required: false
-        description:
-          "Arbitrary token to be exposed as environment variable in the format VARIABLE=value"
+        description: "Arbitrary token to be exposed as environment variable in the format VARIABLE=value"
       auth-token-2:
         required: false
-        description:
-          "Arbitrary token to be exposed as environment variable in the format VARIABLE=value"
+        description: "Arbitrary token to be exposed as environment variable in the format VARIABLE=value"
     outputs:
       ref-slug:
         description: "A URL sanitized version of the github ref"
@@ -239,7 +229,6 @@ jobs:
           reporter: ${{ inputs.eslint-reporter }}
           eslint_flags: ${{ inputs.eslint-flags }}
           level: ${{ inputs.eslint-level }}
-          fail_on_error: ${{ inputs.eslint-fail-on-error }}
           fail_level: ${{ inputs.eslint-fail-level }}
 
   # <---------------------- PRETTIER --------------------->
@@ -340,7 +329,25 @@ jobs:
             ${{ inputs.path }}/test-report.html
             ${{ inputs.path }}/coverage/test-report.html
             ${{ inputs.path }}/coverage/cobertura-coverage.xml
-
+  coverage:
+    name: Vitest coverage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: ${{ inputs.install-command }}
+        working-directory: ${{ inputs.path }}
+      - name: Test
+        run: ${{ inputs.test-command }}
+        working-directory: ${{ inputs.path }}
+      - name: Test coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ${{ inputs.path }}
+        continue-on-error: true
   # <----------------------- TSC ------------------------->
   tsc:
     name: TSC
