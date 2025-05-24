@@ -1,0 +1,28 @@
+name: PR Lint Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  test:
+    uses: ./.github/workflows/node-tests.yml
+    secrets: inherit
+  dist-check:
+    uses: ./.github/workflows/dist-check.yml
+    secrets: inherit
+  dist-run:
+    if: ${{ github.event_name != 'push' }}
+    needs: [test,dist-check]
+    runs-on: ubuntu-latest-arm64-2-cores
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+  success:
+    needs: [test,dist-check]
+    runs-on: ubuntu-latest-arm64-2-cores
+    steps:
+      - run: echo "Workflow successful"
