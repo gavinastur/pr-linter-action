@@ -1,0 +1,11 @@
+node_modules
+temp
+npm-debug.log
+.idea/
+.vscode/
+coverage
+eslint-report.html
+lib/
+*.iml
+.DS_Store
+/src/main/config/commitlint.schema.json

@@ -1,0 +1,4 @@
+# temp add this since we cannot patch @octokit libs due to incompatible versions
+CVE-2025-25288
+CVE-2025-25290
+CVE-2025-25289

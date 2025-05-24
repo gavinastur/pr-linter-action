@@ -1,0 +1,12 @@
+name: PR lint
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  prlint:
+    runs-on: ubuntu-latest-arm64-2-cores
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./

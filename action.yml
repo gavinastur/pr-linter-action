@@ -1,0 +1,9 @@
+name: Pull Request Linter Action
+description: A GitHub action that enforces conventional commit spec on pull requests to ensure a clean commit history.
+author: Navigation
+runs:
+  using: node20
+  main: dist/main/index.js
+branding:
+  icon: git-pull-request
+  color: blue

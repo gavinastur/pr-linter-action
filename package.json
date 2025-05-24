@@ -1,0 +1,60 @@
+{
+  "name": "pr-linter-action",
+  "description": "A GitHub action that enforces conventional commit spec on pull requests to ensure a clean commit history.",
+  "author": "Gavin Astur",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gavinastur/pr-linter-action.git"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "19.8.0",
+    "@commitlint/lint": "19.8.0",
+    "@commitlint/load": "19.8.0",
+    "@tsconfig/node22": "22.0.2",
+    "@types/node": "20.17.48",
+    "@typescript-eslint/eslint-plugin": "8.32.1",
+    "@typescript-eslint/parser": "8.32.1",
+    "@vercel/ncc": "0.38.3",
+    "@vitest/coverage-v8": "3.1.4",
+    "@vitest/ui": "3.1.4",
+    "eslint": "9.27.0",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-prettier": "5.4.0",
+    "husky": "9.1.7",
+    "prettier": "3.5.3",
+    "ts-node": "10.9.2",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.32.1",
+    "vitest": "3.1.4"
+  },
+  "dependencies": {
+    "@actions/core": "1.11.1",
+    "@actions/github": "6.0.1",
+    "undici": "7.8.0"
+  },
+  "main": "lib/main/index.js",
+  "scripts": {
+    "build": "rm -fr dist && npm run lint && npm run tsc && npm run test",
+    "dev": "ts-node src/main/index.ts",
+    "lint": "npm run pretty && npm run eslint:check -- --fix",
+    "lint:ci": "npm run pretty && npm run eslint:check",
+    "eslint:check": "eslint 'src/**/*.{js,ts,tsx}'",
+    "prepare": "npm run build && husky",
+    "copyConfig": "cp src/main/config/commitlint.schema.json ./dist/main/commitlint.schema.json",
+    "package": "ncc build -o dist/main --license licenses.txt && npm run copyConfig",
+    "pretty": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
+    "prettier:ci": "npm run pretty",
+    "postinstall": "husky",
+    "precommit": "npm run build",
+    "postbuild": "npm run package && git add dist/",
+    "start": "node dist/main/index.js",
+    "test": "vitest run --coverage",
+    "test:ci": "vitest run --silent --coverage --reporter default --reporter html --outputFile ./coverage/test-report.html",
+    "tsc": "tsc"
+  },
+  "engines": {
+    "node": "^22.0.0",
+    "npm": "^10.0.0"
+  }
+}
