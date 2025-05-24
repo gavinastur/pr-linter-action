@@ -1,0 +1,22 @@
+name: Dist Check
+
+on:
+  workflow_call:
+
+jobs:
+  dist-check:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --quiet
+      - name: Diff
+        run: |
+          if [ "$(git diff --ignore-space-at-eol --text --cached dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build. Please commit the changes and push manually."
+            exit 1
+          fi
