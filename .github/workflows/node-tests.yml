@@ -76,7 +76,7 @@ on:
         required: false
         type: string
         description: "Used to override the default command to run your unit tests"
-        default: "npm run test:unit-ci"
+        default: "npm run test:ci"
       coverage-report-enable:
         required: false
         type: boolean
@@ -256,7 +256,8 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Export variables
         run: |
@@ -293,7 +294,8 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Export variables
         run: |
@@ -356,7 +358,8 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Export auth token 1
         env:
