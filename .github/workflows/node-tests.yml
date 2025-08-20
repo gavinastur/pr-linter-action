@@ -302,7 +302,7 @@ jobs:
           ${{ inputs.test-command }}
 
       - name: Generate Coverage Report
-        uses: clearlyip/code-coverage-report-action@v5
+        uses: clearlyip/code-coverage-report-action@v6
         id: code_coverage_report_action
         if: inputs.coverage-report-enable && github.actor != 'dependabot[bot]'
         with:
