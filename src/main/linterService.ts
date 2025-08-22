@@ -1,14 +1,14 @@
-import configCustom from '../main/config/commitlint.rules.js';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { error, setFailed } from '@actions/core';
+import { context } from '@actions/github';
 import configConventional from '@commitlint/config-conventional';
+import * as commitlintSchema from '@commitlint/config-validator/lib/commitlint.schema.json' with { type: 'json' };
 import lint from '@commitlint/lint';
 import load from '@commitlint/load';
-import { LintOptions, LintOutcome, PluginRecords, QualifiedConfig, QualifiedRules } from '@commitlint/types';
-import { context } from '@actions/github';
-import { error, setFailed } from '@actions/core';
-import { mkdirSync, writeFileSync } from 'fs';
-import * as commitlintSchema from '@commitlint/config-validator/lib/commitlint.schema.json' with { type: 'json' };
-import path from 'path';
-import { fileURLToPath } from 'url';
+import type { LintOptions, LintOutcome, PluginRecords, QualifiedConfig, QualifiedRules } from '@commitlint/types';
+import configCustom from '../main/config/commitlint.rules.js';
 
 const pathName = `${path.dirname(fileURLToPath(import.meta.url))}/config/`;
 const schemaFileName = `${pathName}/commitlint.schema.json`;
@@ -29,7 +29,7 @@ export const prlint = async (): Promise<void> => {
   try {
     if (!context.payload.pull_request) {
       throw new Error(
-        `Unsupported GitHub event: ${context.eventName} - this action only supports pull https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request`
+        `Unsupported GitHub event: ${context.eventName} - this action only supports pull https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request`,
       );
     }
 
@@ -40,7 +40,11 @@ export const prlint = async (): Promise<void> => {
     configLocal.rules = configCustom.rules as unknown as QualifiedRules;
     configLocal.plugins = configCustom.plugins as unknown as PluginRecords;
 
-    const lintOutcome: LintOutcome = await lint(prTitle, { ...configConventional.rules, ...configLocal.rules }, getLintOptions(configLocal));
+    const lintOutcome: LintOutcome = await lint(
+      prTitle,
+      { ...configConventional.rules, ...configLocal.rules },
+      getLintOptions(configLocal),
+    );
     if (!lintOutcome.valid) {
       lintOutcome.errors.forEach((err) => {
         console.error('prlint:', err.message);

@@ -1,7 +1,7 @@
-import { prlint } from '../main/linterService.js';
-import * as github from '@actions/github';
 import * as actionCore from '@actions/core';
-import { MockInstance } from 'vitest';
+import * as github from '@actions/github';
+import type { MockInstance } from 'vitest';
+import { prlint } from '../main/linterService.js';
 
 vi.mock('@actions/core');
 
@@ -53,7 +53,7 @@ describe('PR Linter', () => {
       await prlint();
       expect(setFailedSpy).toHaveBeenCalledTimes(1);
       expect(setFailedSpy).toHaveBeenCalledWith(
-        'Unsupported GitHub event: push - this action only supports pull https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request'
+        'Unsupported GitHub event: push - this action only supports pull https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request',
       );
     });
 
@@ -66,7 +66,7 @@ describe('PR Linter', () => {
       expect(errorSpy).toHaveBeenNthCalledWith(2, '- type may not be empty');
       expect(setFailedSpy).toHaveBeenCalledTimes(1);
       expect(setFailedSpy).toHaveBeenCalledWith(
-        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint'
+        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint',
       );
     });
 
@@ -78,7 +78,7 @@ describe('PR Linter', () => {
       expect(errorSpy).toHaveBeenNthCalledWith(1, '- scope should have uppercase JIRA- prefix');
       expect(setFailedSpy).toHaveBeenCalledTimes(1);
       expect(setFailedSpy).toHaveBeenCalledWith(
-        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint'
+        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint',
       );
     });
 
@@ -101,10 +101,13 @@ describe('PR Linter', () => {
 
       await prlint();
       expect(errorSpy).toHaveBeenCalledTimes(1);
-      expect(errorSpy).toHaveBeenNthCalledWith(1, '- type must be one of [build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test]');
+      expect(errorSpy).toHaveBeenNthCalledWith(
+        1,
+        '- type must be one of [build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test]',
+      );
       expect(setFailedSpy).toHaveBeenCalledTimes(1);
       expect(setFailedSpy).toHaveBeenCalledWith(
-        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint'
+        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint',
       );
     });
 
@@ -116,7 +119,7 @@ describe('PR Linter', () => {
       expect(errorSpy).toHaveBeenNthCalledWith(1, '- subject must not be sentence-case, start-case, pascal-case, upper-case');
       expect(setFailedSpy).toHaveBeenCalledTimes(1);
       expect(setFailedSpy).toHaveBeenCalledWith(
-        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint'
+        'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint',
       );
     });
   });

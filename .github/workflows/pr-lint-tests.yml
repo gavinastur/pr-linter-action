@@ -15,6 +15,9 @@ permissions:
 jobs:
   test:
     uses: ./.github/workflows/node-tests.yml
+    with:
+      eslint-command: npm run lint:ci
+      prettier-command: npm run prettier:ci
     secrets: inherit
   dist-check:
     uses: ./.github/workflows/dist-check.yml
