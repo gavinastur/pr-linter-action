@@ -181,7 +181,7 @@ jobs:
         uses: rlespinasse/github-slug-action@v5.2.0
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -243,7 +243,7 @@ jobs:
           fetch-depth: ${{ inputs.fetch-depth }}
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -281,7 +281,7 @@ jobs:
           fetch-depth: ${{ inputs.fetch-depth }}
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -334,7 +334,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -363,7 +363,7 @@ jobs:
         uses: rlespinasse/github-slug-action@v5.2.0
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
