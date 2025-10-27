@@ -214,7 +214,7 @@ jobs:
           ${{ inputs.eslint-command }}
 
       - name: Upload artifacts (ES Lint Report)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: inputs.eslint-command && inputs.eslint-report-path
         with:
           name: "${{ inputs.artifact-prefix }}ES Lint Report"
@@ -320,7 +320,7 @@ jobs:
           path: code-coverage-results.md
 
       - name: Upload Unit Test Reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: "${{ inputs.artifact-prefix }}Unit Test & Coverage Reports"
