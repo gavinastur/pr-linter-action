@@ -1,0 +1,45 @@
+{
+  "timezone": "Europe/London",
+  "schedule": ["after 5pm every weekday", "before 8am every weekday"],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "customManagers:biomeVersions",
+    "group:babelMonorepo",
+    "group:googleapis",
+    "group:linters",
+    "group:postcss",
+    "group:reactMonorepo",
+    "group:terraformMonorepo",
+    "group:test",
+    "mergeConfidence:all-badges",
+    ":semanticCommits"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["*"],
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "matchUpdateTypes": ["bump", "digest", "lockFileMaintenance", "minor", "patch", "pin"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "rangeStrategy": "pin",
+      "matchPackageNames": ["*"]
+    },
+    {
+      "matchDepTypes": ["engines"],
+      "rangeStrategy": "auto"
+    }
+  ],
+  "branchPrefix": "rv8/",
+  "hashedBranchLength": null,
+  "labels": ["renovate"],
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  }
+}
