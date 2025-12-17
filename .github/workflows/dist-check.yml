@@ -3,6 +3,9 @@ name: Dist Check
 on:
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   dist-check:
     runs-on: ubuntu-24.04
