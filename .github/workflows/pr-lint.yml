@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, edited, reopened]
 
+permissions:
+  contents: read
+
 jobs:
   prlint:
     runs-on: ubuntu-24.04
