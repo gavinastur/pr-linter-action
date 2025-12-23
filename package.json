@@ -13,7 +13,7 @@
     "@commitlint/lint": "19.8.1",
     "@commitlint/load": "19.8.1",
     "@tsconfig/node24": "24.0.3",
-    "@types/node": "24.10.1",
+    "@types/node": "24.10.2",
     "@vercel/ncc": "0.38.4",
     "@vitest/coverage-v8": "4.0.15",
     "@vitest/ui": "4.0.15",
