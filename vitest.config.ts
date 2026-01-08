@@ -9,7 +9,8 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'v8',
-      include: ['src/**', '!src/main/index.ts', '!src/test/**'],
+      include: ['src/**'],
+      exclude: ['src/main/types/**', 'src/test/**', '*.json'],
       reporter: ['html', 'text', 'json-summary', 'json', 'clover'],
       thresholds: {
         lines: 80,

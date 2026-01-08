@@ -54,7 +54,7 @@ on:
         type: boolean
         description: "For the PR coverage report, only list changed files."
         required: false
-        default: true
+        default: false
       # <------------------ TSC SETTINGS ----------------->
       tsc-enable:
         required: false
