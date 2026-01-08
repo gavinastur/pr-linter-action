@@ -73556,7 +73556,7 @@ const outside = __nccwpck_require__(280)
 const gtr = __nccwpck_require__(2276)
 const ltr = __nccwpck_require__(5213)
 const intersects = __nccwpck_require__(3465)
-const simplifyRange = __nccwpck_require__(9647)
+const simplifyRange = __nccwpck_require__(2028)
 const subset = __nccwpck_require__(1489)
 module.exports = {
   parse,
@@ -74246,7 +74246,7 @@ module.exports = outside
 
 /***/ }),
 
-/***/ 9647:
+/***/ 2028:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 // given a set of versions and a range, create a "simplified" range
@@ -276795,6 +276795,39 @@ async function parse(message, parser = conventional_commits_parser.sync, parserO
 }
 /* harmony default export */ const parse_lib = (parse);
 //# sourceMappingURL=index.js.map
+;// CONCATENATED MODULE: ./node_modules/@commitlint/message/lib/index.js
+function message(input = []) {
+    return input.filter(Boolean).join(" ");
+}
+//# sourceMappingURL=index.js.map
+;// CONCATENATED MODULE: ./node_modules/@commitlint/rules/lib/breaking-change-exclamation-mark.js
+
+const breakingChangeExclamationMark = (parsed, when = "always") => {
+    const header = parsed.header;
+    const footer = parsed.footer;
+    // It is the correct behavior to return true only when both the header and footer are empty,
+    // but still run the usual checks if one or neither are empty.
+    // The reasoning is that if one is empty and the other contains a breaking change marker,
+    // then the check fails as it is not possible for the empty one to indicate a breaking change.
+    if (!header && !footer) {
+        return [true];
+    }
+    const hasExclamationMark = !!header && /^(\w*)(?:\((.*)\))?!: (.*)$/.test(header);
+    const hasBreakingChange = !!footer && /^BREAKING[ -]CHANGE:/m.test(footer);
+    const negated = when === "never";
+    const check = hasExclamationMark === hasBreakingChange;
+    return [
+        negated ? !check : check,
+        message([
+            "breaking changes",
+            negated ? "must not" : "must",
+            "have both an exclamation mark in the header",
+            "and BREAKING CHANGE in the footer",
+            "to identify a breaking change",
+        ]),
+    ];
+};
+//# sourceMappingURL=breaking-change-exclamation-mark.js.map
 // EXTERNAL MODULE: ./node_modules/lodash.camelcase/index.js
 var lodash_camelcase = __nccwpck_require__(4277);
 // EXTERNAL MODULE: ./node_modules/lodash.kebabcase/index.js
@@ -276870,8 +276903,15 @@ function ensureCase(raw = "", target = "lowercase") {
 //# sourceMappingURL=max-length.js.map
 ;// CONCATENATED MODULE: ./node_modules/@commitlint/ensure/lib/max-line-length.js
 
+// Allow an exception for long lines which contain URLs.
+//
+// This is overly lenient, in order to avoid costly regexps which
+// have to worry about all the many edge cases of valid URLs.
+const URL_REGEX = /\bhttps?:\/\/\S+/;
 /* harmony default export */ const max_line_length = ((value, max) => typeof value === "string" &&
-    value.split(/\r?\n/).every((line) => max_length(line, max)));
+    value
+        .split(/\r?\n/)
+        .every((line) => URL_REGEX.test(line) || max_length(line, max)));
 //# sourceMappingURL=max-line-length.js.map
 ;// CONCATENATED MODULE: ./node_modules/@commitlint/ensure/lib/min-length.js
 /* harmony default export */ const min_length = ((value, min) => typeof value === "string" && value.length >= min);
@@ -276890,11 +276930,6 @@ function ensureCase(raw = "", target = "lowercase") {
 
 
 
-//# sourceMappingURL=index.js.map
-;// CONCATENATED MODULE: ./node_modules/@commitlint/message/lib/index.js
-function message(input = []) {
-    return input.filter(Boolean).join(" ");
-}
 //# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ./node_modules/@commitlint/rules/lib/body-case.js
 
@@ -277403,7 +277438,7 @@ const subjectExclamationMark = (parsed, when = "always") => {
         return [true, ""];
     }
     const negated = when === "never";
-    const hasExclamationMark = /!:/.test(input);
+    const hasExclamationMark = /^(\w*)(?:\((.*)\))?!: (.*)$/.test(input);
     return [
         negated ? !hasExclamationMark : hasExclamationMark,
         message([
@@ -277561,6 +277596,7 @@ const typeMinLength = (parsed, _when = undefined, value = 0) => {
 
 
 
+
 /* harmony default export */ const rules_lib = ({
     "body-case": bodyCase,
     "body-empty": bodyEmpty,
@@ -277569,6 +277605,7 @@ const typeMinLength = (parsed, _when = undefined, value = 0) => {
     "body-max-length": bodyMaxLength,
     "body-max-line-length": bodyMaxLineLength,
     "body-min-length": bodyMinLength,
+    "breaking-change-exclamation-mark": breakingChangeExclamationMark,
     "footer-empty": footerEmpty,
     "footer-leading-blank": footerLeadingBlank,
     "footer-max-length": footerMaxLength,
@@ -277588,10 +277625,10 @@ const typeMinLength = (parsed, _when = undefined, value = 0) => {
     "signed-off-by": signedOffBy,
     "subject-case": subjectCase,
     "subject-empty": subjectEmpty,
+    "subject-exclamation-mark": subjectExclamationMark,
     "subject-full-stop": subjectFullStop,
     "subject-max-length": subjectMaxLength,
     "subject-min-length": subjectMinLength,
-    "subject-exclamation-mark": subjectExclamationMark,
     "trailer-exists": trailerExists,
     "type-case": typeCase,
     "type-empty": typeEmpty,
@@ -280112,7 +280149,12 @@ var resolve_from = __nccwpck_require__(1631);
 
 
 
+
 const dynamicImport = async (id) => {
+    if (id.endsWith(".json")) {
+        const require = (0,external_node_module_.createRequire)(import.meta.url);
+        return require(id);
+    }
     const imported = await __nccwpck_require__(8926)(external_node_path_.isAbsolute(id) ? (0,external_node_url_.pathToFileURL)(id).toString() : id);
     return ("default" in imported && imported.default) || imported;
 };
