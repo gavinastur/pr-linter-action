@@ -10,7 +10,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**', '!src/main/index.ts', '!src/test/**'],
-      reporter: ['html', 'text', 'json-summary', 'json'],
+      reporter: ['html', 'text', 'json-summary', 'json', 'clover'],
       thresholds: {
         lines: 80,
         branches: 80,
