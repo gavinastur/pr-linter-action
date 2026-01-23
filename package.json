@@ -9,9 +9,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
-    "@commitlint/config-conventional": "20.2.0",
-    "@commitlint/lint": "20.2.0",
-    "@commitlint/load": "20.2.0",
+    "@commitlint/config-conventional": "20.3.1",
+    "@commitlint/lint": "20.3.1",
+    "@commitlint/load": "20.3.1",
     "@tsconfig/node24": "24.0.3",
     "@types/node": "24.10.4",
     "@vercel/ncc": "0.38.4",
