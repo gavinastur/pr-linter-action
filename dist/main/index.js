@@ -300329,7 +300329,12 @@ const scopeCase = (parsed, when = "always", value = []) => {
     if (!scope) {
         return [true];
     }
-    const checks = (Array.isArray(value) ? value : [value]).map((check) => {
+    const isObjectBasedConfiguration = !Array.isArray(value) && !(typeof value === "string");
+    const checks = (isObjectBasedConfiguration
+        ? value.cases
+        : Array.isArray(value)
+            ? value
+            : [value]).map((check) => {
         if (typeof check === "string") {
             return {
                 when: "always",
@@ -300338,12 +300343,18 @@ const scopeCase = (parsed, when = "always", value = []) => {
         }
         return check;
     });
-    // Scopes may contain slash or comma delimiters to separate them and mark them as individual segments.
-    // This means that each of these segments should be tested separately with `ensure`.
-    const delimiters = /\/|\\|, ?/g;
-    const scopeSegments = scope.split(delimiters);
+    const delimiters = isObjectBasedConfiguration && value.delimiters?.length
+        ? value.delimiters
+        : ["/", "\\", ","];
+    const delimiterPatterns = delimiters.map((delimiter) => {
+        return delimiter === ","
+            ? ", ?"
+            : delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    });
+    const delimiterRegex = new RegExp(delimiterPatterns.join("|"));
+    const scopeSegments = scope.split(delimiterRegex);
     const result = checks.some((check) => {
-        const r = scopeSegments.every((segment) => delimiters.test(segment) || lib_case(segment, check.case));
+        const r = scopeSegments.every((segment) => delimiterRegex.test(segment) || lib_case(segment, check.case));
         return scope_case_negated(check.when) ? !r : r;
     });
     const list = checks.map((c) => c.case).join(", ");
@@ -300353,6 +300364,32 @@ const scopeCase = (parsed, when = "always", value = []) => {
     ];
 };
 //# sourceMappingURL=scope-case.js.map
+;// CONCATENATED MODULE: ./node_modules/@commitlint/rules/lib/scope-delimiter-style.js
+
+
+const scopeDelimiterStyle = ({ scope }, when = "always", value = []) => {
+    if (!scope) {
+        return [true];
+    }
+    const delimiters = value.length ? value : ["/", "\\", ","];
+    const scopeRawDelimiters = scope.match(/[^A-Za-z0-9-_]+/g) ?? [];
+    const scopeDelimiters = [
+        ...new Set(scopeRawDelimiters.map((delimiter) => {
+            return delimiter.trim() === "," ? "," : delimiter;
+        })),
+    ];
+    const isAllDelimitersAllowed = scopeDelimiters.every((delimiter) => {
+        return lib_enum(delimiter, delimiters);
+    });
+    const isNever = when === "never";
+    return [
+        isNever ? !isAllDelimitersAllowed : isAllDelimitersAllowed,
+        message([
+            `scope delimiters must ${isNever ? "not " : ""}be one of [${delimiters.join(", ")}]`,
+        ]),
+    ];
+};
+//# sourceMappingURL=scope-delimiter-style.js.map
 ;// CONCATENATED MODULE: ./node_modules/@commitlint/rules/lib/scope-empty.js
 
 
@@ -300369,15 +300406,21 @@ const scopeEmpty = (parsed, when = "never") => {
 
 
 const scopeEnum = ({ scope }, when = "always", value = []) => {
-    if (!scope || !value.length) {
+    const scopes = Array.isArray(value) ? value : value.scopes;
+    if (!scope || !scopes.length) {
         return [true, ""];
     }
-    // Scopes may contain slash or comma delimiters to separate them and mark them as individual segments.
-    // This means that each of these segments should be tested separately with `ensure`.
-    const delimiters = /\/|\\|, ?/g;
-    const messageScopes = scope.split(delimiters);
-    const errorMessage = ["scope must", `be one of [${value.join(", ")}]`];
-    const isScopeInEnum = (scope) => lib_enum(scope, value);
+    const delimiters = Array.isArray(value) || !value.delimiters?.length
+        ? ["/", "\\", ","]
+        : value.delimiters;
+    const delimiterPatterns = delimiters.map((delimiter) => {
+        return delimiter === ","
+            ? ", ?"
+            : delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    });
+    const messageScopes = scope.split(new RegExp(delimiterPatterns.join("|")));
+    const errorMessage = ["scope must", `be one of [${scopes.join(", ")}]`];
+    const isScopeInEnum = (scope) => lib_enum(scope, scopes);
     let isValid;
     if (when === "never") {
         isValid = !messageScopes.some(isScopeInEnum) && !isScopeInEnum(scope);
@@ -300704,6 +300747,7 @@ const typeMinLength = (parsed, _when = undefined, value = 0) => {
 
 
 
+
 /* harmony default export */ const rules_lib = ({
     "body-case": bodyCase,
     "body-empty": bodyEmpty,
@@ -300725,6 +300769,7 @@ const typeMinLength = (parsed, _when = undefined, value = 0) => {
     "header-trim": headerTrim,
     "references-empty": referencesEmpty,
     "scope-case": scopeCase,
+    "scope-delimiter-style": scopeDelimiterStyle,
     "scope-empty": scopeEmpty,
     "scope-enum": scopeEnum,
     "scope-max-length": scopeMaxLength,
@@ -303557,12 +303602,15 @@ async function loadConfig(cwd, configPath) {
             // files supported by TypescriptLoader
             `.${moduleName}rc.ts`,
             `.${moduleName}rc.cts`,
+            `.${moduleName}rc.mts`,
             `${moduleName}.config.ts`,
             `${moduleName}.config.cts`,
+            `${moduleName}.config.mts`,
         ],
         loaders: {
             ".ts": tsLoader,
             ".cts": tsLoader,
+            ".mts": tsLoader,
             ".cjs": loaders[".cjs"],
             ".js": loaders[".js"],
         },
