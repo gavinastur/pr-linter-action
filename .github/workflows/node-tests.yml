@@ -131,7 +131,7 @@ jobs:
           fetch-depth: ${{ inputs.fetch-depth }}
 
       - name: Slugify github variables
-        uses: rlespinasse/github-slug-action@v5.4.0
+        uses: rlespinasse/github-slug-action@v5.5.0
 
       - name: Setup NodeJS
         uses: actions/setup-node@v6
@@ -258,7 +258,7 @@ jobs:
           fetch-depth: ${{ inputs.fetch-depth }}
 
       - name: Slugify github variables
-        uses: rlespinasse/github-slug-action@v5.4.0
+        uses: rlespinasse/github-slug-action@v5.5.0
 
       - name: Setup NodeJS
         uses: actions/setup-node@v6
