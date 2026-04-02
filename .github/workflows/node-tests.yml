@@ -9,7 +9,6 @@ permissions:
 on:
   workflow_call:
     inputs:
-      # <---------------- BUILD SETTINGS ----------------->
       install-command:
         required: false
         type: string
@@ -21,7 +20,6 @@ on:
         type: string
         description: "Relative path from project root to your node application's source files"
         default: "."
-        # <---------------- LINT SETTINGS ---------------->
       lint-enable:
         required: false
         type: boolean
@@ -33,7 +31,6 @@ on:
         description:
           "Use to execute a standard ES Lint command (e.g. npm lint:ci)"
         default: "npm run lint:ci"
-      # <----------------- TEST SETTINGS ----------------->
       test-enable:
         required: false
         type: boolean
@@ -55,7 +52,6 @@ on:
         description: "For the PR coverage report, only list changed files."
         required: false
         default: false
-      # <------------------ TSC SETTINGS ----------------->
       tsc-enable:
         required: false
         type: boolean
@@ -89,19 +85,16 @@ on:
         type: boolean
         description: "To not fail the job on tsc errors set to false"
         default: true
-      # <--------------- ARTIFACT NAMING ------------->
       artifact-prefix:
         type: string
         description: "A prefix to apply to the name of the artifacts to upload (useful for matrix builds)"
         required: false
-      # <--------------- GIT SETTINGS ------------->
       fetch-depth:
         required: false
         type: number
         description: "Number of commits to fetch. 0 indicates all history for all branches and tags."
         default: 1
     secrets:
-      # <-------------- BUILD CREDENTIALS ---------------->
       auth-token:
         required: false
         description: "Arbitrary token to be exposed as environment variable in the format VARIABLE=value"
@@ -116,7 +109,6 @@ on:
         description: "Captures the short SHA for use in this or later workflow jobs"
         value: ${{ jobs.lint.outputs.short-sha }}
 jobs:
-  # <---------------------- LINT ---------------------->
   lint:
     name: Lint
     if: ${{ inputs.lint-enable }}
@@ -167,7 +159,6 @@ jobs:
         if: ${{ inputs.lint-command }}
         run: |
           ${{ inputs.lint-command }}
-  # <----------------------- TESTS ----------------------->
   tests:
     name: Tests
     runs-on: ubuntu-24.04
@@ -227,26 +218,6 @@ jobs:
             ${{ inputs.path }}/test-report.html
             ${{ inputs.path }}/coverage/test-report.html
             ${{ inputs.path }}/coverage/clover.xml
-#  coverage:
-#    name: Vitest coverage
-#    runs-on: ubuntu-24.04
-#    steps:
-#      - uses: actions/checkout@v6
-#      - uses: actions/setup-node@v6
-#        with:
-#          node-version-file: .nvmrc
-#          cache: npm
-#      - run: ${{ inputs.install-command }}
-#        working-directory: ${{ inputs.path }}
-#      - name: Test
-#        run: ${{ inputs.test-command }}
-#        working-directory: ${{ inputs.path }}
-#      - name: Test coverage
-#        uses: davelosert/vitest-coverage-report-action@v2
-#        with:
-#          working-directory: ${{ inputs.path }}
-#        continue-on-error: true
-  # <----------------------- TSC ------------------------->
   tsc:
     name: TSC
     if: ${{ inputs.tsc-enable }}
