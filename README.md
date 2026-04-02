@@ -18,7 +18,7 @@ This action is a composite action and sets up Node from its bundled `.nvmrc` aut
 steps:
   - name: PR Linter
     id: test
-    uses: gavinastur/pr-linter-action@main
+    uses: gavinastur/pr-linter-action@v1
 ```
 
 If your workflow also needs repository files for other steps, keep your `actions/checkout` step.
@@ -54,3 +54,23 @@ The PR LInter does not validate branch names yet but we suggest the following
 
 Because this a GitHub action and requires us to commit the dist folder, some dependency updates cause the dist folder to need updating. Hence you'll see the `dist-check` workflow fail.
 To fix this you simply have to checkout that branch, run `npm install` and then commit the dist changes. Bit of a pain, if Renovate could run "Git hooks" it wouldn’t be an issue.
+
+Releases are automated by `.github/workflows/release.yml` using release-please.
+The workflow runs after successful CI on `main` and can also be triggered manually with `workflow_dispatch`.
+For manual runs, set `dry_run: true` to preview versioning behavior without publishing a release or moving the `vX` tag.
+Conventional commit messages determine the next semantic version and generate release notes.
+Each release creates an immutable `vX.Y.Z` tag and updates the moving major tag (`vX`).
+
+## Manual release
+
+To trigger a release manually:
+
+1. Go to **Actions → Release** in the GitHub repository.
+2. Click **Run workflow**.
+3. Select the `main` branch.
+4. Set `dry_run`:
+   - `false` _(default)_ — publishes a real release, creates `vX.Y.Z` tag, and advances the `vX` tag.
+   - `true` — runs release-please in preview mode; no release, tag, or PR is created or modified.
+5. Click **Run workflow**.
+
+> **Tip:** Run with `dry_run: true` first to confirm the next version number before committing to a real release.
