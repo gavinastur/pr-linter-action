@@ -36,6 +36,7 @@
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
-    "labels": ["security"]
+    "labels": ["security"],
+    "enabled": true
   }
 }
