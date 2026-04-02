@@ -4,6 +4,7 @@ import type { MockInstance } from 'vitest';
 import { prlint } from '../main/linterService.js';
 
 vi.mock('@actions/core');
+vi.mock('@actions/github');
 
 const setCtx = (title: string, branch: string) => {
   Object.defineProperty(github, 'context', {
