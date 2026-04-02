@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Create Release
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  update-major-tag:
+    name: Update Major Tag
+    needs: release
+    if: ${{ needs.release.outputs.release_created == 'true' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Move major tag
+        env:
+          TAG_NAME: ${{ needs.release.outputs.tag_name }}
+        run: |
+          if [[ -z "$TAG_NAME" ]]; then
+            echo "No release tag found"
+            exit 0
+          fi
+          if [[ "$TAG_NAME" =~ ^v([0-9]+)\.[0-9]+\.[0-9]+ ]]; then
+            MAJOR_TAG="v${BASH_REMATCH[1]}"
+          else
+            echo "Tag '$TAG_NAME' is not semver in the expected vX.Y.Z format"
+            exit 1
+          fi
+
+          git fetch --tags --force
+          git tag -fa "$MAJOR_TAG" "$TAG_NAME" -m "chore(release): move $MAJOR_TAG to $TAG_NAME"
+          git push origin "refs/tags/$MAJOR_TAG" --force
+
