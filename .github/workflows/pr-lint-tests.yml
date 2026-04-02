@@ -18,13 +18,13 @@ jobs:
     secrets: inherit
   run-check:
     if: ${{ github.event_name != 'push' }}
-    needs: [test,run-check]
+    needs: test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./
   success:
-    needs: [test,run-check]
+    needs: [test, run-check]
     runs-on: ubuntu-24.04
     steps:
       - run: echo "Workflow successful"
