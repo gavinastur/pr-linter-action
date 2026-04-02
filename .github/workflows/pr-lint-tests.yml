@@ -16,18 +16,15 @@ jobs:
   test:
     uses: ./.github/workflows/node-tests.yml
     secrets: inherit
-  dist-check:
-    uses: ./.github/workflows/dist-check.yml
-    secrets: inherit
-  dist-run:
+  run-check:
     if: ${{ github.event_name != 'push' }}
-    needs: [test,dist-check]
+    needs: [test,run-check]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: ./
   success:
-    needs: [test,dist-check]
+    needs: [test,run-check]
     runs-on: ubuntu-24.04
     steps:
       - run: echo "Workflow successful"

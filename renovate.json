@@ -5,14 +5,10 @@
   "extends": [
     "config:recommended",
     "customManagers:biomeVersions",
-    "group:babelMonorepo",
-    "group:googleapis",
     "group:linters",
-    "group:postcss",
-    "group:reactMonorepo",
-    "group:terraformMonorepo",
     "group:test",
     "mergeConfidence:all-badges",
+    "helpers:pinGitHubActionDigestsToSemver",
     ":semanticCommits"
   ],
   "packageRules": [

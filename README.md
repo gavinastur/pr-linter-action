@@ -11,18 +11,17 @@ FYI: The reason for pre building the config is a workaround since `@commitlint/l
 
 ## Usage
 
-- Ensure you run these steps before using this action
-  - [checkout action](https://github.com/actions/checkout)  
-- Add the following to a workflow `.yml` file in the `/.github/workflows` directory of your repo
+Add the following to a workflow `.yml` file in the `/.github/workflows` directory of your repo.
+This action is a composite action and sets up Node from its bundled `.nvmrc` automatically.
 
 ```yaml
 steps:
-  - name: Check out code
-    uses: actions/checkout@v4
   - name: PR Linter
     id: test
     uses: gavinastur/pr-linter-action@main
 ```
+
+If your workflow also needs repository files for other steps, keep your `actions/checkout` step.
 
 
 ## Commit and PR conventions
