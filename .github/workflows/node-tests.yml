@@ -200,7 +200,7 @@ jobs:
           only_list_changed_files: ${{ inputs.coverage-only-list-changed-files }}
 
       - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@70d2764d1a7d5d9560b100cbea0077fc8f633987 # v3
+        uses: marocchino/sticky-pull-request-comment@70d2764d1a7d5d9560b100cbea0077fc8f633987 # v3.0.2
         if:
           inputs.coverage-report-enable && steps.code_coverage_report_action.outputs.file != '' &&
           github.event_name == 'pull_request' && (success() || failure())
