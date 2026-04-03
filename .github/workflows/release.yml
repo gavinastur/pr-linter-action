@@ -2,9 +2,18 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run release automation without creating or updating releases/tags"
+        type: choice
+        default: 'false'
+        options:
+          - 'true'
+          - 'false'
 
 permissions:
   contents: write
+  issues: write
   pull-requests: write
 
 concurrency:
@@ -17,41 +26,56 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      new_release_published: ${{ steps.release.outputs.new_release_published }}
+      new_release_version: ${{ steps.release.outputs.new_release_version }}
+      new_release_notes: ${{ steps.release.outputs.new_release_notes }}
+      new_release_major_version: ${{ steps.release.outputs.new_release_major_version }}
+      new_release_minor_version: ${{ steps.release.outputs.new_release_minor_version }}
+      new_release_patch_version: ${{ steps.release.outputs.new_release_patch_version }}
+      last_release_version: ${{ steps.release.outputs.last_release_version }}
     steps:
-      - id: release
-        uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+      - name: Checkout Source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
+          fetch-depth: 0
+      - id: release
+        name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          dry_run: ${{ inputs.dry-run }}
+          extra_plugins: |
+            @semantic-release/git@10.0.1
+            @semantic-release/changelog@6.0.3
+            @semantic-release/exec@7.0.2
+            conventional-changelog-conventionalcommits@8.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Success summary
+        if: ${{ steps.release.outputs.new_release_published == 'true' }}
+        run: |
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+            ### :bookmark: ✅ New release created (${{ steps.semantic-release.outputs.new_release_version }})
+            **Release Notes:**
+            ${{ steps.release.outputs.new_release_notes }}
+          EOF
 
   update-major-tag:
     name: Update Major Tag
     needs: release
-    if: ${{ needs.release.outputs.release_created == 'true' }}
+    if: ${{ needs.release.outputs.new_release_published == 'true' && needs.release.outputs.dry_run != 'true' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+
       - name: Move major tag
         env:
-          TAG_NAME: ${{ needs.release.outputs.tag_name }}
+          TAG_NAME: v${{ needs.release.outputs.new_release_version }}
+          MAJOR_TAG: v${{ needs.release.outputs.new_release_major_version }}
         run: |
-          if [[ -z "$TAG_NAME" ]]; then
-            echo "No release tag found"
-            exit 0
-          fi
-          if [[ "$TAG_NAME" =~ ^v([0-9]+)\.[0-9]+\.[0-9]+ ]]; then
-            MAJOR_TAG="v${BASH_REMATCH[1]}"
-          else
-            echo "Tag '$TAG_NAME' is not semver in the expected vX.Y.Z format"
-            exit 1
-          fi
-
           git fetch --tags --force
           git tag -fa "$MAJOR_TAG" "$TAG_NAME" -m "chore(release): move $MAJOR_TAG to $TAG_NAME"
           git push origin "refs/tags/$MAJOR_TAG" --force
-
