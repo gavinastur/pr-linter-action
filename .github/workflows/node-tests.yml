@@ -259,7 +259,7 @@ jobs:
           ${{ inputs.install-command }}
 
       - name: Execute TSC
-        uses: EPMatt/reviewdog-action-tsc@63d923a3c5b4497671940b8874f58a404e2351b5 # v1
+        uses: EPMatt/reviewdog-action-tsc@63d923a3c5b4497671940b8874f58a404e2351b5 # v1.11.0
         with:
           workdir: ${{ inputs.path }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
