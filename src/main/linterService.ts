@@ -11,7 +11,7 @@ import type { LintOptions, LintOutcome, PluginRecords, QualifiedConfig, Qualifie
 import configCustom from '../main/config/commitlint.rules.js';
 
 const pathName = `${path.dirname(fileURLToPath(import.meta.url))}/config/`;
-const schemaFileName = `${pathName}/commitlint.schema.json`;
+const schemaFileName = `${pathName}commitlint.schema.json`;
 // Write the commitlint schema since the action requires it as an actual file at runtime
 console.log('prlint: generating commitlint schema:', schemaFileName);
 mkdirSync(pathName, { recursive: true });

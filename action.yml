@@ -13,11 +13,11 @@ runs:
     - name: Install dependencies
       shell: bash
       working-directory: ${{ github.action_path }}
-      run: npm ci --quiet
+      run: npm ci --quiet --omit=dev
     - name: Run PR linter
       shell: bash
       working-directory: ${{ github.action_path }}
-      run: npx tsx src/main/index.ts
+      run: npm run start
 branding:
   icon: git-pull-request
   color: blue
