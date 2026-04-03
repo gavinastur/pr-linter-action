@@ -44,8 +44,6 @@ jobs:
         with:
           dry_run: ${{ inputs.dry-run }}
           extra_plugins: |
-            @semantic-release/git@10.0.1
-            @semantic-release/changelog@6.0.3
             @semantic-release/exec@7.0.2
             conventional-changelog-conventionalcommits@8.0.0
         env:
