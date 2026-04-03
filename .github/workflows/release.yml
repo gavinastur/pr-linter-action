@@ -23,7 +23,7 @@ concurrency:
 jobs:
   release:
     name: Create Release
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-24.04
     outputs:
       new_release_published: ${{ steps.release.outputs.new_release_published }}
@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0
       - id: release
         name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@5d7d6b1f2f0c9b5f2d8f6f7f5e2a3c4b6d7e8f90 # v4
         with:
           dry_run: ${{ inputs.dry-run }}
           extra_plugins: |
@@ -63,7 +63,7 @@ jobs:
   update-major-tag:
     name: Update Major Tag
     needs: release
-    if: ${{ needs.release.outputs.new_release_published == 'true' && needs.release.outputs.dry_run != 'true' }}
+    if: ${{ needs.release.outputs.new_release_published == 'true' && inputs.dry_run != 'true' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Source
