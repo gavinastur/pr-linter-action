@@ -3,7 +3,7 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      dry_run:
+      dry-run:
         description: "Run release automation without creating or updating releases/tags"
         type: choice
         default: 'false'
