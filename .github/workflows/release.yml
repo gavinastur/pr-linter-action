@@ -55,7 +55,7 @@ jobs:
         if: ${{ steps.release.outputs.new_release_published == 'true' }}
         run: |
           cat <<EOF >> $GITHUB_STEP_SUMMARY
-            ### :bookmark: ✅ New release created (${{ steps.semantic-release.outputs.new_release_version }})
+            ### :bookmark: ✅ New release created (${{ steps.release.outputs.new_release_version }})
             **Release Notes:**
             ${{ steps.release.outputs.new_release_notes }}
           EOF
