@@ -1,6 +1,10 @@
 # Pull Request Linter Action
 
-A GitHub action that enforces conventional commit spec on pull requests to ensure a clean commit history. see https://www.conventionalcommits.org/ 
+[![PR Lint Tests](https://github.com/gavinastur/pr-linter-action/actions/workflows/pr-lint-tests.yml/badge.svg)](https://github.com/gavinastur/pr-linter-action/actions/workflows/pr-lint-tests.yml)
+[![Release](https://github.com/gavinastur/pr-linter-action/actions/workflows/release.yml/badge.svg)](https://github.com/gavinastur/pr-linter-action/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+A GitHub action that enforces conventional commit spec on pull requests to ensure a clean commit history. see https://www.conventionalcommits.org/
 
 ## Features
 Uses default commit lint config which is auto generated at build time (`src/main/config/commitlint-config.ts`) based on https://github.com/conventional-changelog/commitlint
