@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": "./src",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -11,5 +10,5 @@
     "moduleResolution": "NodeNext",
     "types": ["vitest/globals", "node"]
   },
-  "exclude": ["lib", "dist", "node_modules", "vitest.config.ts"]
+  "exclude": ["dist", "node_modules", "vitest.config.ts"]
 }
