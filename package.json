@@ -9,7 +9,7 @@
     "url": "git@github.com:gavinastur/pr-linter-action.git"
   },
   "dependencies": {
-    "@actions/core": "3.0.0",
+    "@actions/core": "3.0.1",
     "@actions/github": "9.1.0",
     "@commitlint/config-conventional": "20.5.0",
     "@commitlint/lint": "20.5.0",
