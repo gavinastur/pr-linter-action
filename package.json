@@ -11,9 +11,9 @@
   "dependencies": {
     "@actions/core": "3.0.1",
     "@actions/github": "9.1.1",
-    "@commitlint/config-conventional": "20.5.0",
-    "@commitlint/lint": "20.5.0",
-    "@commitlint/load": "20.5.2",
+    "@commitlint/config-conventional": "20.5.3",
+    "@commitlint/lint": "20.5.3",
+    "@commitlint/load": "20.5.3",
     "tsx": "4.21.0"
   },
   "devDependencies": {
