@@ -20,10 +20,10 @@
     "@biomejs/biome": "2.4.16",
     "@tsconfig/node24": "24.0.4",
     "@types/node": "24.12.4",
-    "@vitest/coverage-v8": "4.1.7",
-    "@vitest/ui": "4.1.7",
+    "@vitest/coverage-v8": "4.1.8",
+    "@vitest/ui": "4.1.8",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   },
   "main": "src/main/index.ts",
   "scripts": {
