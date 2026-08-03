@@ -118,7 +118,7 @@ jobs:
       ref-slug: ${{ env.GITHUB_REF_SLUG_URL }}
     steps:
       - name: Checkout Source
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: ${{ inputs.fetch-depth }}
 
@@ -163,7 +163,7 @@ jobs:
     if: ${{ inputs.test-enable }}
     steps:
       - name: Checkout Source
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: ${{ inputs.fetch-depth }}
 
@@ -222,7 +222,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Source
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: ${{ inputs.fetch-depth }}
 
