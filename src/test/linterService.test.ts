@@ -112,12 +112,29 @@ describe('PR Linter', () => {
       );
     });
 
-    test('that prlint should fail when pr title has a subject with invalid case', async () => {
-      setCtx('fix: UPPER CASE', 'chore_fix-something');
+    test.each([
+      {
+        title: 'fix: Sentence case',
+        expectedError: '- subject must not be sentence-case',
+      },
+      {
+        title: 'fix: Start Case',
+        expectedError: '- subject must not be sentence-case, start-case',
+      },
+      {
+        title: 'fix: UPPER CASE',
+        expectedError: '- subject must not be sentence-case, start-case, upper-case',
+      },
+      {
+        title: 'fix: PascalCase',
+        expectedError: '- subject must not be sentence-case, pascal-case',
+      },
+    ])('that prlint should fail when pr title has a subject with invalid case: $title', async ({ title, expectedError }) => {
+      setCtx(title, 'chore_fix-something');
 
       await prlint();
       expect(errorSpy).toHaveBeenCalledTimes(1);
-      expect(errorSpy).toHaveBeenNthCalledWith(1, '- subject must not be sentence-case, start-case, pascal-case, upper-case');
+      expect(errorSpy).toHaveBeenNthCalledWith(1, expectedError);
       expect(setFailedSpy).toHaveBeenCalledTimes(1);
       expect(setFailedSpy).toHaveBeenCalledWith(
         'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint',
