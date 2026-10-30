@@ -140,5 +140,26 @@ describe('PR Linter', () => {
         'Pull Request title does not conform to the conventional commit spec. For help see: https://github.com/conventional-changelog/commitlint/#what-is-commitlint',
       );
     });
+
+    test.each(['Merge branch foo', 'Revert "feat: something"', 'fixup! wip', '1.2.3'])(
+      'that prlint should not apply commitlint default ignores to pr title: %s',
+      async (title) => {
+        setCtx(title, 'chore_fix-something');
+
+        await prlint();
+        expect(errorSpy).toHaveBeenCalledTimes(2);
+        expect(errorSpy).toHaveBeenNthCalledWith(1, '- subject may not be empty');
+        expect(errorSpy).toHaveBeenNthCalledWith(2, '- type may not be empty');
+        expect(setFailedSpy).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    test.each(['', '   ', undefined])('that prlint should fail when pr title is missing or empty: %j', async (title) => {
+      setCtx(title as string, 'chore_fix-something');
+
+      await prlint();
+      expect(setFailedSpy).toHaveBeenCalledTimes(1);
+      expect(setFailedSpy).toHaveBeenCalledWith('Pull Request title is missing or empty');
+    });
   });
 });
