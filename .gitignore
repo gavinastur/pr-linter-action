@@ -8,5 +8,4 @@ eslint-report.html
 lib/
 *.iml
 .DS_Store
-/src/main/config/commitlint.schema.json
 dist
