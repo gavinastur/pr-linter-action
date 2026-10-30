@@ -51,12 +51,15 @@ jobs:
 
       - name: Success summary
         if: ${{ steps.release.outputs.new_release_published == 'true' }}
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.new_release_version }}
+          RELEASE_NOTES: ${{ steps.release.outputs.new_release_notes }}
         run: |
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-            ### :bookmark: ✅ New release created (${{ steps.release.outputs.new_release_version }})
-            **Release Notes:**
-            ${{ steps.release.outputs.new_release_notes }}
-          EOF
+          {
+            printf '### :bookmark: ✅ New release created (%s)\n' "$RELEASE_VERSION"
+            printf '**Release Notes:**\n'
+            printf '%s\n' "$RELEASE_NOTES"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   update-major-tag:
     name: Update Major Tag

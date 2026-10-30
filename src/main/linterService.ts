@@ -21,7 +21,8 @@ const getLintOptions = (configuration: QualifiedConfig): LintOptions => ({
   parserOpts: configuration.parserPreset?.parserOpts || {},
   plugins: configuration.plugins || {},
   ignores: configuration.ignores || [],
-  defaultIgnores: configuration.defaultIgnores || true,
+  // commitlint's default ignores (merge, revert, fixup!, semver, ...) are meant for commits, not PR titles
+  defaultIgnores: false,
 });
 
 export const prlint = async (): Promise<void> => {
@@ -33,7 +34,10 @@ export const prlint = async (): Promise<void> => {
       );
     }
 
-    const prTitle: string = context.payload.pull_request.title;
+    const prTitle: unknown = context.payload.pull_request.title;
+    if (typeof prTitle !== 'string' || !prTitle.trim()) {
+      throw new Error('Pull Request title is missing or empty');
+    }
     console.log(`prlint: pull request title: ${prTitle}`);
 
     const configLocal: QualifiedConfig = await load({}, {});
