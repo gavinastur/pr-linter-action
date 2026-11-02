@@ -1,21 +1,9 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { error, setFailed } from '@actions/core';
 import { context } from '@actions/github';
-import configConventional from '@commitlint/config-conventional';
-import * as commitlintSchema from '@commitlint/config-validator/lib/commitlint.schema.json' with { type: 'json' };
 import lint from '@commitlint/lint';
 import load from '@commitlint/load';
-import type { LintOptions, LintOutcome, PluginRecords, QualifiedConfig, QualifiedRules } from '@commitlint/types';
+import type { LintOptions, LintOutcome, QualifiedConfig } from '@commitlint/types';
 import configCustom from '../main/config/commitlint.rules.js';
-
-const pathName = `${path.dirname(fileURLToPath(import.meta.url))}/config/`;
-const schemaFileName = `${pathName}commitlint.schema.json`;
-// Write the commitlint schema since the action requires it as an actual file at runtime
-console.log('prlint: generating commitlint schema:', schemaFileName);
-mkdirSync(pathName, { recursive: true });
-writeFileSync(schemaFileName, JSON.stringify(commitlintSchema, null, 2));
 
 const getLintOptions = (configuration: QualifiedConfig): LintOptions => ({
   parserOpts: configuration.parserPreset?.parserOpts || {},
@@ -40,21 +28,14 @@ export const prlint = async (): Promise<void> => {
     }
     console.log(`prlint: pull request title: ${prTitle}`);
 
-    const configLocal: QualifiedConfig = await load({}, {});
-    configLocal.rules = configCustom.rules as unknown as QualifiedRules;
-    configLocal.plugins = configCustom.plugins as unknown as PluginRecords;
-
-    const lintOutcome: LintOutcome = await lint(
-      prTitle,
-      { ...configConventional.rules, ...configLocal.rules },
-      getLintOptions(configLocal),
-    );
+    const config: QualifiedConfig = await load(configCustom);
+    const lintOutcome: LintOutcome = await lint(prTitle, config.rules, getLintOptions(config));
     if (!lintOutcome.valid) {
       lintOutcome.errors.forEach((err) => {
         console.error('prlint:', err.message);
         error(`- ${err.message}`);
       });
-      setFailed(`Pull Request title does not conform to the conventional commit spec. For help see: ${configLocal.helpUrl}`);
+      setFailed(`Pull Request title does not conform to the conventional commit spec. For help see: ${config.helpUrl}`);
     }
 
     console.log('prlint: Done');
