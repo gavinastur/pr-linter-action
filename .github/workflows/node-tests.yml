@@ -54,29 +54,10 @@ on:
         type: boolean
         description: "To disable the tsc job set to false"
         default: true
-      tsc-filter-mode:
-        required: false
-        type: string
-        description: |
-          Filtering mode for the reviewdog command (added, diff_context, file, nofilter). 
-          TypeScript errors will sometimes appear in lines or files that weren't modified 
-          by the commit the workflow run is associated with, these will be included
-          with the default 'nofilter' option.
-        default: "nofilter"
       tsc-flags:
         required: false
         type: string
         description: "Provide additional flags to the tsc command"
-      tsc-reporter:
-        required: false
-        type: string
-        description: "Choose the reporter to use for tsc (github-pr-review, github-pr-check, github-check)"
-        default: "github-check"
-      tsc-level:
-        required: false
-        type: string
-        description: "Choose the level of tsc to use (error, warning, info)"
-        default: "error"
       tsc-fail-on-error:
         required: false
         type: boolean
@@ -253,12 +234,8 @@ jobs:
           ${{ inputs.install-command }}
 
       - name: Execute TSC
-        uses: EPMatt/reviewdog-action-tsc@63d923a3c5b4497671940b8874f58a404e2351b5 # v1.11.0
-        with:
-          workdir: ${{ inputs.path }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: ${{ inputs.tsc-reporter }}
-          filter_mode: ${{ inputs.tsc-filter-mode }}
-          tsc_flags: ${{ inputs.tsc-flags }}
-          level: ${{ inputs.tsc-level }}
-          fail_on_error: ${{ inputs.tsc-fail-on-error }}
+        working-directory: ${{ inputs.path }}
+        continue-on-error: ${{ !inputs.tsc-fail-on-error }}
+        env:
+          TSC_FLAGS: ${{ inputs.tsc-flags }}
+        run: npx tsc --noEmit --pretty false $TSC_FLAGS
