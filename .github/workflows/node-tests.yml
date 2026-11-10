@@ -49,6 +49,11 @@ on:
         description: "For the PR coverage report, only list changed files."
         required: false
         default: false
+      coverage-fail-threshold:
+        required: false
+        type: number
+        description: "For the PR coverage report, fail if overall coverage is below this percentage."
+        default: 80
       tsc-enable:
         required: false
         type: boolean
@@ -186,13 +191,14 @@ jobs:
           ${{ inputs.test-command }}
 
       - name: Generate Coverage Report
-        uses: clearlyip/code-coverage-report-action@v6
+        uses: clearlyip/code-coverage-report-action@9e2cd22e39153feba8b4477e4fefcc0b5e2727ba # v6.0.1
         id: code_coverage_report_action
         if: inputs.coverage-report-enable && github.actor != 'renovate[bot]'
         with:
           filename: ${{ inputs.path }}/coverage/clover.xml
           artifact_download_workflow_names: ${{ github.workflow }}
           only_list_changed_files: ${{ inputs.coverage-only-list-changed-files }}
+          overall_coverage_fail_threshold: ${{ inputs.coverage-fail-threshold }}
 
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
