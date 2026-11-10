@@ -24,7 +24,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./
   success:
+    if: ${{ always() }}
     needs: [test, run-check]
     runs-on: ubuntu-26.04
     steps:
+      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: |
+          echo "One or more required jobs failed or were cancelled"
+          exit 1
       - run: echo "Workflow successful"
