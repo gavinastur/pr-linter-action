@@ -45,6 +45,7 @@ Releases are automated by `.github/workflows/release.yml` using semantic-release
 The workflow is triggered manually via `workflow_dispatch`.
 Conventional commit messages determine the next semantic version and generate release notes.
 Each release creates an immutable `vX.Y.Z` tag and updates the moving major tag (`vX`).
+Release notes are published on the [Releases](https://github.com/gavinastur/pr-linter-action/releases) page; there is no `CHANGELOG.md`.
 
 ## Manual release
 

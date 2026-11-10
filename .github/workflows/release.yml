@@ -44,7 +44,6 @@ jobs:
         with:
           dry_run: ${{ inputs.dry-run }}
           extra_plugins: |
-            @semantic-release/exec@7.0.2
             conventional-changelog-conventionalcommits@8.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
