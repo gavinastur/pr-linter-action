@@ -6,10 +6,10 @@ on:
       dry-run:
         description: "Perform a dry run of the release thus not creating releases/tags"
         type: choice
-        default: 'false'
+        default: "false"
         options:
-          - 'true'
-          - 'false'
+          - "true"
+          - "false"
 
 permissions:
   contents: write

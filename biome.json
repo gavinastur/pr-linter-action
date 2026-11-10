@@ -8,7 +8,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/node_modules"]
+    "includes": ["**", "!**/node_modules", "!CHANGELOG.md"]
   },
   "formatter": {
     "enabled": true,
@@ -18,7 +18,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended"
     }
   },
   "javascript": {

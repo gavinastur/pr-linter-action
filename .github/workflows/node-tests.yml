@@ -12,8 +12,7 @@ on:
       install-command:
         required: false
         type: string
-        description:
-          "Used to override the default command to install your dependencies e.g. npm install"
+        description: "Used to override the default command to install your dependencies e.g. npm install"
         default: "npm ci --quiet"
       path:
         required: false
@@ -28,8 +27,7 @@ on:
       lint-command:
         required: false
         type: string
-        description:
-          "Use to execute a standard ES Lint command (e.g. npm lint:ci)"
+        description: "Use to execute a standard ES Lint command (e.g. npm lint:ci)"
         default: "npm run lint:ci"
       test-enable:
         required: false
@@ -44,8 +42,7 @@ on:
       coverage-report-enable:
         required: false
         type: boolean
-        description:
-          "To enable PR coverage report set to true. Requires that the test-command generates a 'coverage/clover.xml' file."
+        description: "To enable PR coverage report set to true. Requires that the test-command generates a 'coverage/clover.xml' file."
         default: true
       coverage-only-list-changed-files:
         type: boolean
@@ -65,7 +62,7 @@ on:
           TypeScript errors will sometimes appear in lines or files that weren't modified 
           by the commit the workflow run is associated with, these will be included
           with the default 'nofilter' option.
-        default: 'nofilter'
+        default: "nofilter"
       tsc-flags:
         required: false
         type: string
@@ -199,8 +196,7 @@ jobs:
 
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
-        if:
-          inputs.coverage-report-enable && steps.code_coverage_report_action.outputs.file != '' &&
+        if: inputs.coverage-report-enable && steps.code_coverage_report_action.outputs.file != '' &&
           github.event_name == 'pull_request' && (success() || failure())
         with:
           recreate: true
