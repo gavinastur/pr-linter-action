@@ -33,7 +33,9 @@
   "branchPrefix": "rv8/",
   "hashedBranchLength": null,
   "labels": ["renovate"],
-  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "dependencyDashboard": {
+    "osvVulnerabilitySummary": "all"
+  },
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "labels": ["security"],
