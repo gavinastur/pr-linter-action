@@ -38,7 +38,6 @@ PR titles which form the commit to the main branch must contain the following co
 
 More information on the spec including further options are available here https://www.conventionalcommits.org/ you can also check the rules in (`src/main/config/commitlint-config.ts`)
 
-
 ## Notes for maintainers
 
 Releases are automated by `.github/workflows/release.yml` using semantic-release.
