@@ -8,14 +8,12 @@ A GitHub action that enforces conventional commit spec on pull requests to ensur
 
 ## Features
 
-Uses default commit lint config which is auto generated at build time (`src/main/config/commitlint-config.ts`) based on https://github.com/conventional-changelog/commitlint
-
-FYI: The reason for pre building the config is a workaround since `@commitlint/load` requires typescript as a runtime dependency which causes odd side effects given we build from TS to JS.
+Uses [`@commitlint/config-conventional`](https://github.com/conventional-changelog/commitlint) plus a `scope-jira` rule, defined in `src/main/config/commitlint.rules.ts`.
 
 ## Usage
 
 Add the following to a workflow `.yml` file in the `/.github/workflows` directory of your repo.
-This action is a composite action and sets up Node from its bundled `.nvmrc` automatically.
+This is a JavaScript action that runs on the runner's built-in Node.js 24. It does not change the Node version for the rest of your job.
 
 ```yaml
 steps:
@@ -23,7 +21,7 @@ steps:
     uses: gavinastur/pr-linter-action@v1
 ```
 
-If your workflow also needs repository files for other steps, keep your `actions/checkout` step.
+The action only reads the pull request title from the event payload, so it does not need an `actions/checkout` step.
 
 ## Commit and PR conventions
 
@@ -36,11 +34,13 @@ PR titles which form the commit to the main branch must contain the following co
 `fix:` patches a bug in your codebase (this correlates with PATCH).
 `feat:` new feature to the codebase (this correlates with MINOR).
 
-More information on the spec including further options are available here https://www.conventionalcommits.org/ you can also check the rules in (`src/main/config/commitlint-config.ts`)
+More information on the spec including further options are available here https://www.conventionalcommits.org/ you can also check the rules in (`src/main/config/commitlint.rules.ts`)
 
 ## Notes for maintainers
 
 Releases are automated by `.github/workflows/release.yml` using semantic-release.
+The action runs from a bundled `dist/index.mjs` (built with `npm run build`). `dist/` is not committed on pull requests: the release workflow builds it and `@semantic-release/git` commits it in the release commit, which is what the `vX.Y.Z` tag points to. This keeps Renovate PRs free of generated code.
+To check the bundle locally, run `npm run build && npm run test:dist`. This runs `dist/index.mjs` from an empty directory against sample pull request events, and also runs in CI on pull requests and before every release.
 The workflow is triggered manually via `workflow_dispatch`.
 Conventional commit messages determine the next semantic version and generate release notes.
 Each release creates an immutable `vX.Y.Z` tag and updates the moving major tag (`vX`).

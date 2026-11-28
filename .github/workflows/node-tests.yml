@@ -95,42 +95,40 @@ jobs:
       short-sha: ${{ env.GITHUB_SHA_SHORT }}
       ref-slug: ${{ env.GITHUB_REF_SLUG_URL }}
     steps:
-      - name: Checkout Source
+      - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: ${{ inputs.fetch-depth }}
 
-      - name: Slugify github variables
+      - name: Slugify GitHub variables
         uses: rlespinasse/github-slug-action@0e3299190dac9a700da92a90de4556116ea965ed # v5.7.1
 
-      - name: Setup NodeJS
+      - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Export auth token 1
+      # Each secret is a VARIABLE=value line. GitHub masks the whole secret string, so the value
+      # is masked separately before it becomes an environment variable for later steps.
+      - name: Export auth tokens
         env:
-          TOKEN: ${{ secrets.auth-token }}
-        if: ${{ env.TOKEN != '' }}
+          AUTH_TOKEN_1: ${{ secrets.auth-token }}
+          AUTH_TOKEN_2: ${{ secrets.auth-token-2 }}
         run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
+          for token in "$AUTH_TOKEN_1" "$AUTH_TOKEN_2"; do
+            if [ -n "$token" ]; then
+              echo "::add-mask::${token#*=}"
+              echo "$token" >> "$GITHUB_ENV"
+            fi
+          done
 
-      - name: Export auth token 2
-        env:
-          TOKEN: ${{ secrets.auth-token-2 }}
-        if: ${{ env.TOKEN != '' }}
-        run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
-
-      - name: Install Dependencies
+      - name: Install dependencies
         working-directory: ${{ inputs.path }}
         run: |
           ${{ inputs.install-command }}
 
-      - name: Execute Lint (command)
+      - name: Run lint
         working-directory: ${{ inputs.path }}
         if: ${{ inputs.lint-command }}
         run: |
@@ -140,33 +138,42 @@ jobs:
     runs-on: ubuntu-26.04
     if: ${{ inputs.test-enable }}
     steps:
-      - name: Checkout Source
+      - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: ${{ inputs.fetch-depth }}
 
-      - name: Setup NodeJS
+      - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Export variables
+      # Each secret is a VARIABLE=value line. GitHub masks the whole secret string, so the value
+      # is masked separately before it becomes an environment variable for later steps.
+      - name: Export auth tokens
+        env:
+          AUTH_TOKEN_1: ${{ secrets.auth-token }}
+          AUTH_TOKEN_2: ${{ secrets.auth-token-2 }}
         run: |
-          echo "${{ secrets.auth-token }}" >> $GITHUB_ENV
-          echo "${{ secrets.auth-token-2 }}" >> $GITHUB_ENV
+          for token in "$AUTH_TOKEN_1" "$AUTH_TOKEN_2"; do
+            if [ -n "$token" ]; then
+              echo "::add-mask::${token#*=}"
+              echo "$token" >> "$GITHUB_ENV"
+            fi
+          done
 
-      - name: Install Dependencies
+      - name: Install dependencies
         working-directory: ${{ inputs.path }}
         run: |
           ${{ inputs.install-command }}
 
-      - name: Execute Tests
+      - name: Run tests
         working-directory: ${{ inputs.path }}
         run: |
           ${{ inputs.test-command }}
 
-      - name: Generate Coverage Report
+      - name: Generate coverage report
         uses: clearlyip/code-coverage-report-action@v6
         id: code_coverage_report_action
         if: inputs.coverage-report-enable && github.actor != 'renovate[bot]'
@@ -175,7 +182,7 @@ jobs:
           artifact_download_workflow_names: ${{ github.workflow }}
           only_list_changed_files: ${{ inputs.coverage-only-list-changed-files }}
 
-      - name: Add Coverage PR Comment
+      - name: Add coverage PR comment
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         if: inputs.coverage-report-enable && steps.code_coverage_report_action.outputs.file != '' &&
           github.event_name == 'pull_request' && (success() || failure())
@@ -183,7 +190,7 @@ jobs:
           recreate: true
           path: code-coverage-results.md
 
-      - name: Upload Unit Test Reports
+      - name: Upload unit test reports
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -198,42 +205,40 @@ jobs:
     if: ${{ inputs.tsc-enable }}
     runs-on: ubuntu-26.04
     steps:
-      - name: Checkout Source
+      - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: ${{ inputs.fetch-depth }}
 
-      - name: Slugify github variables
+      - name: Slugify GitHub variables
         uses: rlespinasse/github-slug-action@0e3299190dac9a700da92a90de4556116ea965ed # v5.7.1
 
-      - name: Setup NodeJS
+      - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Export auth token 1
+      # Each secret is a VARIABLE=value line. GitHub masks the whole secret string, so the value
+      # is masked separately before it becomes an environment variable for later steps.
+      - name: Export auth tokens
         env:
-          TOKEN: ${{ secrets.auth-token }}
-        if: ${{ env.TOKEN != '' }}
+          AUTH_TOKEN_1: ${{ secrets.auth-token }}
+          AUTH_TOKEN_2: ${{ secrets.auth-token-2 }}
         run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
+          for token in "$AUTH_TOKEN_1" "$AUTH_TOKEN_2"; do
+            if [ -n "$token" ]; then
+              echo "::add-mask::${token#*=}"
+              echo "$token" >> "$GITHUB_ENV"
+            fi
+          done
 
-      - name: Export auth token 2
-        env:
-          TOKEN: ${{ secrets.auth-token-2 }}
-        if: ${{ env.TOKEN != '' }}
-        run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
-
-      - name: Install Dependencies
+      - name: Install dependencies
         working-directory: ${{ inputs.path }}
         run: |
           ${{ inputs.install-command }}
 
-      - name: Execute TSC
+      - name: Run TSC
         working-directory: ${{ inputs.path }}
         continue-on-error: ${{ !inputs.tsc-fail-on-error }}
         env:

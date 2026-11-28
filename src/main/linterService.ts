@@ -1,17 +1,17 @@
 import { error, setFailed } from '@actions/core';
 import { context } from '@actions/github';
 import lint from '@commitlint/lint';
-import load from '@commitlint/load';
-import type { LintOptions, LintOutcome, QualifiedConfig } from '@commitlint/types';
-import configCustom from '../main/config/commitlint.rules.js';
+import type { LintOptions, LintOutcome } from '@commitlint/types';
+import createPreset from 'conventional-changelog-conventionalcommits';
+import { HELP_URL, plugins, rules } from './config/commitlint.rules.js';
 
-const getLintOptions = (configuration: QualifiedConfig): LintOptions => ({
-  parserOpts: configuration.parserPreset?.parserOpts || {},
-  plugins: configuration.plugins || {},
-  ignores: configuration.ignores || [],
+const lintOptions: LintOptions = {
+  // The preset's typings declare its return type as `{}`, but it returns { parser, writer, ... }.
+  parserOpts: (createPreset() as { parser: LintOptions['parserOpts'] }).parser,
+  plugins,
   // commitlint's default ignores (merge, revert, fixup!, semver, ...) are meant for commits, not PR titles
   defaultIgnores: false,
-});
+};
 
 export const prlint = async (): Promise<void> => {
   console.log('prlint: Running');
@@ -28,14 +28,13 @@ export const prlint = async (): Promise<void> => {
     }
     console.log(`prlint: pull request title: ${prTitle}`);
 
-    const config: QualifiedConfig = await load(configCustom);
-    const lintOutcome: LintOutcome = await lint(prTitle, config.rules, getLintOptions(config));
+    const lintOutcome: LintOutcome = await lint(prTitle, rules, lintOptions);
     if (!lintOutcome.valid) {
       lintOutcome.errors.forEach((err) => {
         console.error('prlint:', err.message);
         error(`- ${err.message}`);
       });
-      setFailed(`Pull Request title does not conform to the conventional commit spec. For help see: ${config.helpUrl}`);
+      setFailed(`Pull Request title does not conform to the conventional commit spec. For help see: ${HELP_URL}`);
     }
 
     console.log('prlint: Done');

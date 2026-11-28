@@ -13,9 +13,8 @@
     "@actions/github": "9.1.1",
     "@commitlint/config-conventional": "21.2.4",
     "@commitlint/lint": "21.2.4",
-    "@commitlint/load": "21.2.4",
     "@commitlint/types": "21.2.3",
-    "tsx": "4.23.15"
+    "conventional-changelog-conventionalcommits": "10.2.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.7",
@@ -23,14 +22,16 @@
     "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.1.0",
     "@vitest/ui": "5.1.0",
+    "rolldown": "1.2.16",
+    "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vitest": "5.1.0"
   },
-  "main": "src/main/index.ts",
+  "main": "dist/index.mjs",
   "scripts": {
-    "build": "npm run tsc",
+    "build": "rolldown -c rolldown.config.ts",
     "dev": "tsx src/main/index.ts",
-    "start": "tsx src/main/index.ts",
+    "start": "node dist/index.mjs",
     "lint": "npm run biome:check:fix",
     "lint:ci": "npm run biome:check",
     "biome:check": "biome check .",
@@ -39,7 +40,8 @@
     "prettier:ci": "npm run pretty",
     "test": "vitest run --coverage",
     "test:ci": "vitest run --silent --coverage",
-    "tsc": "tsc"
+    "tsc": "tsc --noEmit",
+    "test:dist": "node --test src/test/dist.smoke.ts"
   },
   "engines": {
     "node": "^26.0.0",
