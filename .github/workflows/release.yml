@@ -34,10 +34,21 @@ jobs:
       new_release_patch_version: ${{ steps.release.outputs.new_release_patch_version }}
       last_release_version: ${{ steps.release.outputs.last_release_version }}
     steps:
+      # The release commit (with dist/) is pushed to main, which the ruleset only allows for
+      # bypass actors. The GitHub App is on the bypass list; GITHUB_TOKEN cannot be.
+      - name: Create release token
+        id: app-token
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          client-id: ${{ secrets.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      # The checkout credentials are used for git pushes, so they must be the App token too.
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       # The action runs from dist/, which is built here and committed in the release commit
       # by @semantic-release/git, so pull requests (including Renovate) never rebuild it.
@@ -70,7 +81,7 @@ jobs:
             conventional-changelog-conventionalcommits@8.0.0
             @semantic-release/git@10.0.1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Success summary
         if: ${{ steps.release.outputs.new_release_published == 'true' }}
