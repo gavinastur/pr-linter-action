@@ -109,21 +109,19 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Export auth token 1
+      # Each secret is a VARIABLE=value line. GitHub masks the whole secret string, so the value
+      # is masked separately before it becomes an environment variable for later steps.
+      - name: Export Auth Tokens
         env:
-          TOKEN: ${{ secrets.auth-token }}
-        if: ${{ env.TOKEN != '' }}
+          AUTH_TOKEN_1: ${{ secrets.auth-token }}
+          AUTH_TOKEN_2: ${{ secrets.auth-token-2 }}
         run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
-
-      - name: Export auth token 2
-        env:
-          TOKEN: ${{ secrets.auth-token-2 }}
-        if: ${{ env.TOKEN != '' }}
-        run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
+          for token in "$AUTH_TOKEN_1" "$AUTH_TOKEN_2"; do
+            if [ -n "$token" ]; then
+              echo "::add-mask::${token#*=}"
+              echo "$token" >> "$GITHUB_ENV"
+            fi
+          done
 
       - name: Install Dependencies
         working-directory: ${{ inputs.path }}
@@ -151,10 +149,19 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Export variables
+      # Each secret is a VARIABLE=value line. GitHub masks the whole secret string, so the value
+      # is masked separately before it becomes an environment variable for later steps.
+      - name: Export Auth Tokens
+        env:
+          AUTH_TOKEN_1: ${{ secrets.auth-token }}
+          AUTH_TOKEN_2: ${{ secrets.auth-token-2 }}
         run: |
-          echo "${{ secrets.auth-token }}" >> $GITHUB_ENV
-          echo "${{ secrets.auth-token-2 }}" >> $GITHUB_ENV
+          for token in "$AUTH_TOKEN_1" "$AUTH_TOKEN_2"; do
+            if [ -n "$token" ]; then
+              echo "::add-mask::${token#*=}"
+              echo "$token" >> "$GITHUB_ENV"
+            fi
+          done
 
       - name: Install Dependencies
         working-directory: ${{ inputs.path }}
@@ -212,21 +219,19 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Export auth token 1
+      # Each secret is a VARIABLE=value line. GitHub masks the whole secret string, so the value
+      # is masked separately before it becomes an environment variable for later steps.
+      - name: Export Auth Tokens
         env:
-          TOKEN: ${{ secrets.auth-token }}
-        if: ${{ env.TOKEN != '' }}
+          AUTH_TOKEN_1: ${{ secrets.auth-token }}
+          AUTH_TOKEN_2: ${{ secrets.auth-token-2 }}
         run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
-
-      - name: Export auth token 2
-        env:
-          TOKEN: ${{ secrets.auth-token-2 }}
-        if: ${{ env.TOKEN != '' }}
-        run: |
-          echo "::add-mask::${TOKEN#*=}"
-          echo "${{ env.TOKEN }}" >> $GITHUB_ENV
+          for token in "$AUTH_TOKEN_1" "$AUTH_TOKEN_2"; do
+            if [ -n "$token" ]; then
+              echo "::add-mask::${token#*=}"
+              echo "$token" >> "$GITHUB_ENV"
+            fi
+          done
 
       - name: Install Dependencies
         working-directory: ${{ inputs.path }}
