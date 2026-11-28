@@ -40,7 +40,8 @@
     "prettier:ci": "npm run pretty",
     "test": "vitest run --coverage",
     "test:ci": "vitest run --silent --coverage",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "test:dist": "node --test src/test/dist.smoke.ts"
   },
   "engines": {
     "node": "^26.0.0",

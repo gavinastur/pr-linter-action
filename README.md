@@ -40,6 +40,7 @@ More information on the spec including further options are available here https:
 
 Releases are automated by `.github/workflows/release.yml` using semantic-release.
 The action runs from a bundled `dist/index.mjs` (built with `npm run build`). `dist/` is not committed on pull requests: the release workflow builds it and `@semantic-release/git` commits it in the release commit, which is what the `vX.Y.Z` tag points to. This keeps Renovate PRs free of generated code.
+To check the bundle locally, run `npm run build && npm run test:dist`. This runs `dist/index.mjs` from an empty directory against sample pull request events, and also runs in CI on pull requests and before every release.
 The workflow is triggered manually via `workflow_dispatch`.
 Conventional commit messages determine the next semantic version and generate release notes.
 Each release creates an immutable `vX.Y.Z` tag and updates the moving major tag (`vX`).
