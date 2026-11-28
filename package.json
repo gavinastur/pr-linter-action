@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.7",
-    "@tsconfig/node26": "26.0.2",
-    "@types/node": "26.6.6",
+    "@tsconfig/node24": "24.0.6",
+    "@types/node": "24.19.4",
     "@vitest/coverage-v8": "5.1.0",
     "@vitest/ui": "5.1.0",
     "rolldown": "1.2.16",
@@ -44,7 +44,7 @@
     "test:dist": "node --test src/test/dist.smoke.ts"
   },
   "engines": {
-    "node": "^26.0.0",
+    "node": "^24.0.0",
     "npm": "^11.0.0"
   }
 }

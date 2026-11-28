@@ -28,6 +28,11 @@
     {
       "matchDepTypes": ["engines"],
       "rangeStrategy": "auto"
+    },
+    {
+      "description": "Keep Node.js on 24, the runtime GitHub runs this action on (runs.using: node24 in action.yml). Raise both together.",
+      "matchPackageNames": ["node", "@types/node"],
+      "allowedVersions": "<25"
     }
   ],
   "branchPrefix": "rv8/",
