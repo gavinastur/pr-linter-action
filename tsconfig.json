@@ -2,7 +2,7 @@
   "extends": "@tsconfig/node26/tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
+    "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -10,5 +10,5 @@
     "moduleResolution": "NodeNext",
     "types": ["vitest/globals", "node"]
   },
-  "exclude": ["dist", "node_modules", "vitest.config.ts"]
+  "exclude": ["dist", "node_modules", "vitest.config.ts", "rolldown.config.ts"]
 }

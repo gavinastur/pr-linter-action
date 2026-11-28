@@ -1,22 +1,9 @@
 name: PR Linter Action
 description: A GitHub action that enforces conventional commit spec on pull request titles to ensure a clean commit history.
-author: Navigation
+author: Gavin Astur
 runs:
-  using: composite
-  steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-    - name: Setup Node.js
-      uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-      with:
-        node-version-file: ${{ github.action_path }}/.nvmrc
-    - name: Install dependencies
-      shell: bash
-      working-directory: ${{ github.action_path }}
-      run: npm ci --quiet --omit=dev
-    - name: Run PR linter
-      shell: bash
-      working-directory: ${{ github.action_path }}
-      run: npm run start
+  using: node24
+  main: dist/index.mjs
 branding:
   icon: git-pull-request
   color: blue

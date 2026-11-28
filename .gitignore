@@ -8,4 +8,5 @@ eslint-report.html
 lib/
 *.iml
 .DS_Store
+# dist/ is only committed by the release workflow (@semantic-release/git force-adds it)
 dist

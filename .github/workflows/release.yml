@@ -38,6 +38,20 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+
+      # The action runs from dist/, which is built here and committed in the release commit
+      # by @semantic-release/git, so pull requests (including Renovate) never rebuild it.
+      - name: Setup NodeJS
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Build dist
+        run: |
+          npm ci --quiet
+          npm run build
+
       - id: release
         name: Semantic Release
         uses: cycjimmy/semantic-release-action@ad51787758d9654d5a75150a89a6fa9b3ccef95e # v8.1.4
@@ -45,6 +59,7 @@ jobs:
           dry_run: ${{ inputs.dry-run }}
           extra_plugins: |
             conventional-changelog-conventionalcommits@8.0.0
+            @semantic-release/git@10.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
 
